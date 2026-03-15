@@ -5,39 +5,45 @@ import os
 import re
 from pathlib import Path
 
-from .engine_io import append_jsonl, new_id, now_iso
+from .engine_io import append_jsonl, new_id, now_iso, read_yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "raw"
+CONFIG_PATH = ROOT / "config.yaml"
 
-# Keyword → marker mapping (supports Chinese + English)
-MARKER_KEYWORDS: dict[str, list[str]] = {
-    # Communication style
-    "summary_first": ["摘要", "summary", "先总结", "概要", "overview first", "先给摘要", "先说结论", "结论先行"],
-    "simplify": ["简洁", "简单", "simplify", "concise", "brief", "精简", "别啰嗦", "少废话", "直接说"],
-    "use_chinese": ["用中文", "中文回复", "说中文", "chinese", "请用中文"],
-    "use_tables": ["用表格", "表格形式", "table format", "用表格展示"],
-    "show_evidence": ["给证据", "证据", "依据", "evidence", "show proof", "哪个文件", "具体文件"],
-    # Execution style
-    "modular_changes": ["模块化", "modular", "incremental", "逐步", "分步", "小步", "一步一步", "最小改动"],
-    "avoid_interruptions": ["不要问", "别问", "don't ask", "no questions", "直接做", "just do it", "别确认"],
-    "check_before_change": ["先检查", "先看看", "先读", "read first", "check first", "先确认一下"],
-    "prefer_diagnosis": ["诊断", "diagnose", "排查", "定位问题", "根因", "root cause", "什么原因"],
-    # Decision style
-    "wants_options": ["给我选项", "有哪些方案", "options", "几种方案", "哪些选择", "你建议"],
-    "prefers_direct_action": ["直接改", "直接做", "不用问", "just fix", "just do", "帮我改"],
-    # Scope control
-    "no_over_engineering": ["不要过度", "别过度", "不要大重构", "最小修复", "minimal", "不要加额外的"],
-    "stay_focused": ["不要跑题", "别跑题", "专注", "focus", "只做这个", "不要扩展"],
-}
+
+def _load_taxonomy() -> dict[str, dict]:
+    """Load taxonomy from config. Returns {key: {category, description, keywords}}."""
+    cfg = read_yaml(CONFIG_PATH)
+    return cfg.get("taxonomy", {})
+
+
+def _build_marker_keywords() -> dict[str, list[str]]:
+    """Build marker → keywords mapping from taxonomy config."""
+    taxonomy = _load_taxonomy()
+    markers: dict[str, list[str]] = {}
+    for key, entry in taxonomy.items():
+        if isinstance(entry, dict) and "keywords" in entry:
+            markers[key] = entry["keywords"]
+    return markers
+
+
+# Legacy compatibility: also load old-style markers section if taxonomy is missing
+def _get_marker_keywords() -> dict[str, list[str]]:
+    markers = _build_marker_keywords()
+    if markers:
+        return markers
+    # Fallback to legacy markers section
+    cfg = read_yaml(CONFIG_PATH)
+    return cfg.get("markers", {})
 
 
 def detect_markers(prompt: str) -> list[str]:
-    """Scan prompt text for preference keywords and return matching markers."""
+    """Scan prompt text for preference keywords and return matching taxonomy keys."""
     text = prompt.lower()
     found: list[str] = []
-    for marker, keywords in MARKER_KEYWORDS.items():
+    for marker, keywords in _get_marker_keywords().items():
         if any(kw in text for kw in keywords):
             found.append(marker)
     return found

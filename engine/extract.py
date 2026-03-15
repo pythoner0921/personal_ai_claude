@@ -3,12 +3,44 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from .engine_io import new_id, now_iso, read_jsonl, write_jsonl
+from .engine_io import new_id, now_iso, read_jsonl, read_yaml, write_jsonl
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "raw"
 INF = ROOT / "inference"
+CONFIG_PATH = ROOT / "config.yaml"
+
+
+def _load_taxonomy() -> dict[str, dict]:
+    """Load taxonomy from config."""
+    return read_yaml(CONFIG_PATH).get("taxonomy", {})
+
+
+def _load_legacy_map() -> dict[str, str]:
+    """Load legacy marker key → taxonomy key mapping."""
+    return read_yaml(CONFIG_PATH).get("legacy_marker_map", {})
+
+
+def _build_marker_to_signal() -> dict[str, tuple[str, str]]:
+    """Build marker → (category, signal_key) mapping from taxonomy config."""
+    taxonomy = _load_taxonomy()
+    legacy = _load_legacy_map()
+    mapping: dict[str, tuple[str, str]] = {}
+
+    for key, entry in taxonomy.items():
+        if isinstance(entry, dict):
+            cat = entry.get("category", "general")
+            desc = entry.get("description", key.replace("_", " "))
+            signal_key = desc.replace(" ", "_")
+            mapping[key] = (cat, signal_key)
+
+    # Add legacy key aliases
+    for old_key, new_key in legacy.items():
+        if new_key in mapping:
+            mapping[old_key] = mapping[new_key]
+
+    return mapping
 
 
 def _signal_from_terminal(ev: dict) -> tuple[str, str] | None:
@@ -24,42 +56,44 @@ def _signal_from_terminal(ev: dict) -> tuple[str, str] | None:
     return None
 
 
-_MARKER_TO_SIGNAL: dict[str, tuple[str, str]] = {
-    # Communication
-    "summary_first": ("communication", "prefers_summary_before_details"),
-    "simplify": ("communication", "prefers_simplified_explanations"),
-    "use_chinese": ("communication", "prefers_chinese_communication"),
-    "use_tables": ("communication", "prefers_table_format_for_comparison"),
-    "show_evidence": ("communication", "wants_evidence_with_specific_files"),
-    # Execution
-    "modular_changes": ("execution", "prefers_modular_changes_over_big_rewrites"),
-    "check_before_change": ("execution", "prefers_read_before_modify"),
-    "prefer_diagnosis": ("execution", "prefers_diagnosis_before_action"),
-    # Decision
-    "avoid_interruptions": ("decision", "dislikes_repeated_clarification_interruptions"),
-    "wants_options": ("decision", "wants_options_before_deciding"),
-    "prefers_direct_action": ("decision", "prefers_direct_action_over_discussion"),
-    # Scope
-    "no_over_engineering": ("scope", "dislikes_over_engineering"),
-    "stay_focused": ("scope", "prefers_staying_focused_on_task"),
-}
-
-
 def _normalize_llm_pattern(pattern: str) -> tuple[str, str]:
-    """Convert a free-text LLM pattern into a (category, signal_key) tuple."""
+    """Convert a free-text LLM pattern into a (category, signal_key) tuple.
+
+    First checks if the pattern matches a taxonomy key directly.
+    Falls back to keyword-based categorization.
+    """
     p = pattern.lower().strip()
-    # Try to categorize by keywords
-    if any(w in p for w in ["chinese", "中文", "language", "table", "format", "verbose", "concise", "brief"]):
+
+    # Check if it's a known taxonomy key
+    taxonomy = _load_taxonomy()
+    if p in taxonomy:
+        entry = taxonomy[p]
+        cat = entry.get("category", "general")
+        desc = entry.get("description", p.replace("_", " "))
+        return (cat, desc.replace(" ", "_"))
+
+    # Keyword-based categorization for free-text patterns
+    if any(w in p for w in ["chinese", "中文", "language", "table", "format", "verbose", "concise", "brief", "summary", "evidence"]):
         cat = "communication"
-    elif any(w in p for w in ["diagnos", "check", "read", "scan", "verify", "test"]):
+    elif any(w in p for w in ["formal", "casual", "direct", "tone", "hedge"]):
+        cat = "tone"
+    elif any(w in p for w in ["step", "pace", "fast", "thorough", "quick"]):
+        cat = "pacing"
+    elif any(w in p for w in ["code only", "bullet", "list", "format"]):
+        cat = "output_format"
+    elif any(w in p for w in ["diagnos", "check", "read", "scan", "verify", "test", "modular", "incremental"]):
         cat = "execution"
-    elif any(w in p for w in ["option", "decide", "choose", "direct", "ask"]):
-        cat = "decision"
+    elif any(w in p for w in ["option", "decide", "choose", "direct", "ask", "interrupt", "reasoning"]):
+        cat = "collaboration"
     elif any(w in p for w in ["focus", "scope", "minimal", "over-engineer", "simple"]):
         cat = "scope"
+    elif any(w in p for w in ["uncertain", "confident", "hedge", "guess"]):
+        cat = "confidence"
+    elif any(w in p for w in ["teach", "expert", "explain", "basics", "learn"]):
+        cat = "learning"
     else:
         cat = "general"
-    # Normalize key: replace spaces/special chars with underscores
+
     key = p.replace(" ", "_").replace("-", "_").replace("'", "")
     key = "".join(c for c in key if c.isalnum() or c == "_")[:60]
     return (cat, key)
@@ -71,12 +105,13 @@ def _signals_from_ai(ev: dict) -> list[tuple[str, str]]:
     intent = ev.get("payload", {}).get("prompt_intent", "")
     is_llm = intent == "[llm_behavior_analysis]"
 
+    marker_to_signal = _build_marker_to_signal()
+
     for m in markers:
         if is_llm:
-            # Free-text patterns from LLM analysis
             out.append(_normalize_llm_pattern(m))
         else:
-            sig = _MARKER_TO_SIGNAL.get(m)
+            sig = marker_to_signal.get(m)
             if sig:
                 out.append(sig)
     return out
@@ -149,7 +184,6 @@ def build_habit_and_candidates() -> tuple[list[dict], list[dict]]:
         cross_context_stability = min(1.0, ctx_total / 3.0)
         source_frequency = min(1.0, count / total_events)
         confidence = min(0.95, 0.45 * source_frequency + 0.55 * cross_context_stability + min(0.3, count * 0.03))
-        # Determine dominant project for scope inference
         ctx = context_counter[(cat, key)]
         dominant_project = ctx.most_common(1)[0][0] if ctx else "global"
         candidates.append({

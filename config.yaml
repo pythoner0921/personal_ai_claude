@@ -10,101 +10,365 @@ hooks:
   timeout_seconds: 10
   stop_async: true
 
-markers:
+# ── LLM configuration ──
+# Controls the local Ollama-based preference extraction layer.
+# To disable LLM extraction entirely, set enabled: false.
+# To switch models, change 'model' below. 'model_high_accuracy' is reserved
+# for future use (e.g., periodic deep analysis).
+llm:
+  enabled: true                      # master switch for LLM extraction
+  model: "qwen2.5:3b"               # default model for every Stop hook call
+  model_high_accuracy: "qwen2.5:7b"  # reserved: deeper analysis (not yet wired)
+  ollama_url: "http://localhost:11434"
+  timeout_seconds: 15
+  max_prompt_chars: 600
+  max_response_chars: 1000
+  temperature: 0.1
+  max_tokens: 300
+  # Gating: skip LLM when these conditions are met
+  gating:
+    min_response_length: 200       # skip if assistant response shorter than this
+    skip_when_keywords_found: true # skip LLM if keyword markers already detected
+    circuit_breaker_threshold: 3   # disable LLM after N consecutive failures
+
+# ── Taxonomy v2: preference categories and keyword markers ──
+taxonomy:
+  # Communication
   summary_first:
-    - 摘要
-    - summary
-    - 先总结
-    - 概要
-    - overview first
-    - 先给摘要
-    - 先说结论
-    - 结论先行
-  simplify:
-    - 简洁
-    - 简单
-    - simplify
-    - concise
-    - brief
-    - 精简
-    - 别啰嗦
-    - 少废话
-    - 直接说
-  use_chinese:
-    - 用中文
-    - 中文回复
-    - 说中文
-    - chinese
-    - 请用中文
+    category: communication
+    description: prefers summary before details
+    keywords:
+      - 摘要
+      - summary
+      - 先总结
+      - 概要
+      - overview first
+      - 先给摘要
+      - 先说结论
+      - 结论先行
+    response_keywords:       # detected in assistant output
+      - summary
+      - overview
+      - 摘要
+      - 概要
+      - tldr
+      - "tl;dr"
+      - 总结
+      - 结论
+  concise_output:
+    category: communication
+    description: prefers concise output
+    keywords:
+      - 简洁
+      - 简单
+      - simplify
+      - concise
+      - brief
+      - 精简
+      - 别啰嗦
+      - 少废话
+      - 直接说
+    response_keywords:
+      - simply
+      - in short
+      - 简单来说
+      - 简而言之
+      - 一句话说
   use_tables:
-    - 用表格
-    - 表格形式
-    - table format
-    - 用表格展示
+    category: communication
+    description: prefers table format for comparison
+    keywords:
+      - 用表格
+      - 表格形式
+      - table format
+      - 用表格展示
+      - 表格对比
+    response_keywords:
+      - "| "
+      - "|-"
+      - "| ---"
   show_evidence:
-    - 给证据
-    - 证据
-    - 依据
-    - evidence
-    - show proof
-    - 哪个文件
-    - 具体文件
+    category: communication
+    description: wants evidence with specific files
+    keywords:
+      - 给证据
+      - 证据
+      - 依据
+      - evidence
+      - show proof
+      - 哪个文件
+      - 具体文件
+    response_keywords:
+      - 具体文件
+      - file_path
+      - "line "
+      - "第 "
+      - "行 "
+  use_chinese:
+    category: communication
+    description: prefers Chinese communication
+    keywords:
+      - 用中文
+      - 中文回复
+      - 说中文
+      - chinese
+      - 请用中文
+    response_keywords:       # response contains Chinese text
+      - 诊断
+      - 建议
+      - 修复
+      - 检查
+      - 问题
+  use_english:
+    category: communication
+    description: prefers English communication
+    keywords:
+      - 用英文
+      - 英文回复
+      - in english
+      - respond in english
+      - please use english
+
+  # Tone
+  formal_tone:
+    category: tone
+    description: prefers formal professional tone
+    keywords:
+      - formal
+      - professional tone
+      - 正式
+      - 专业语气
+  casual_tone:
+    category: tone
+    description: prefers casual conversational tone
+    keywords:
+      - casual
+      - relaxed
+      - informal
+      - 随意
+      - 轻松
+  direct_tone:
+    category: tone
+    description: prefers direct communication without hedging
+    keywords:
+      - direct
+      - straight
+      - no fluff
+      - 直接说
+      - 不绕弯
+
+  # Pacing
+  step_by_step:
+    category: pacing
+    description: prefers step-by-step walkthrough
+    keywords:
+      - step by step
+      - one at a time
+      - walk me through
+      - 逐步
+      - 一步一步
+      - 带我看
+  fast_pace:
+    category: pacing
+    description: prefers fast pace skipping details
+    keywords:
+      - quickly
+      - fast
+      - skip details
+      - 快点
+      - 跳过细节
+      - 不用详细
+  thorough_pace:
+    category: pacing
+    description: prefers thorough comprehensive coverage
+    keywords:
+      - thorough
+      - comprehensive
+      - cover everything
+      - 全面
+      - 详细
+      - 完整
+
+  # Output format
+  show_code_only:
+    category: output_format
+    description: prefers code over prose
+    keywords:
+      - just code
+      - code only
+      - show me the code
+      - 只给代码
+      - 直接给代码
+  explain_with_code:
+    category: output_format
+    description: prefers explanation mixed with code
+    keywords:
+      - explain with code
+      - annotate
+      - 边解释边写
+      - 加注释
+  bullet_points:
+    category: output_format
+    description: prefers bullet point lists
+    keywords:
+      - bullet points
+      - list format
+      - 列表
+      - 要点
+      - 列出来
+
+  # Execution
   modular_changes:
-    - 模块化
-    - modular
-    - incremental
-    - 逐步
-    - 分步
-    - 小步
-    - 一步一步
-    - 最小改动
-  avoid_interruptions:
-    - 不要问
-    - 别问
-    - don't ask
-    - no questions
-    - 直接做
-    - just do it
-    - 别确认
+    category: execution
+    description: prefers modular changes over big rewrites
+    keywords:
+      - 模块化
+      - modular
+      - incremental
+      - 逐步
+      - 分步
+      - 小步
+      - 最小改动
+    response_keywords:
+      - "step 1"
+      - "step 2"
+      - 分步
+      - 逐步
+      - "first,"
+      - "then,"
+      - "方案 1"
+      - "方案 2"
   check_before_change:
-    - 先检查
-    - 先看看
-    - 先读
-    - read first
-    - check first
-    - 先确认一下
+    category: execution
+    description: prefers reading before modifying
+    keywords:
+      - 先检查
+      - 先看看
+      - 先读
+      - read first
+      - check first
+      - 先确认一下
   prefer_diagnosis:
-    - 诊断
-    - diagnose
-    - 排查
-    - 定位问题
-    - 根因
-    - root cause
+    category: execution
+    description: prefers diagnosis before action
+    keywords:
+      - 诊断
+      - diagnose
+      - 排查
+      - 定位问题
+      - 根因
+      - root cause
+      - 什么原因
+
+  # Collaboration
+  avoid_interruptions:
+    category: collaboration
+    description: dislikes repeated clarification interruptions
+    keywords:
+      - 不要问
+      - 别问
+      - don't ask
+      - no questions
+      - 直接做
+      - just do it
+      - 别确认
   wants_options:
-    - 给我选项
-    - 有哪些方案
-    - options
-    - 几种方案
-    - 哪些选择
-    - 你建议
-  prefers_direct_action:
-    - 直接改
-    - 直接做
-    - 不用问
-    - just fix
-    - just do
-    - 帮我改
+    category: collaboration
+    description: wants options before deciding
+    keywords:
+      - 给我选项
+      - 有哪些方案
+      - options
+      - 几种方案
+      - 哪些选择
+      - 你建议
+  direct_action:
+    category: collaboration
+    description: prefers direct action over discussion
+    keywords:
+      - 直接改
+      - 直接做
+      - 不用问
+      - just fix
+      - just do
+      - 帮我改
+  explain_reasoning:
+    category: collaboration
+    description: wants to understand reasoning behind decisions
+    keywords:
+      - explain why
+      - reasoning
+      - 为什么这样
+      - 解释原因
+      - 什么道理
+
+  # Scope
   no_over_engineering:
-    - 不要过度
-    - 别过度
-    - 不要大重构
-    - 最小修复
-    - minimal
-    - 不要加额外的
+    category: scope
+    description: dislikes over-engineering
+    keywords:
+      - 不要过度
+      - 别过度
+      - 不要大重构
+      - 最小修复
+      - minimal
+      - 不要加额外的
   stay_focused:
-    - 不要跑题
-    - 别跑题
-    - 专注
-    - focus
-    - 只做这个
-    - 不要扩展
+    category: scope
+    description: prefers staying focused on task
+    keywords:
+      - 不要跑题
+      - 别跑题
+      - 专注
+      - focus
+      - 只做这个
+      - 不要扩展
+
+  # Confidence style
+  show_uncertainty:
+    category: confidence
+    description: wants uncertainty flagged explicitly
+    keywords:
+      - if unsure
+      - if you're unsure
+      - if you are unsure
+      - flag uncertainty
+      - not sure then say
+      - 不确定就说
+      - 标注不确定
+      - 不知道就说不知道
+  be_confident:
+    category: confidence
+    description: prefers confident decisive responses
+    keywords:
+      - be confident
+      - don't hedge
+      - 别犹豫
+      - 果断
+      - 直接给答案
+
+  # Learning mode
+  teach_mode:
+    category: learning
+    description: wants concepts explained as you go
+    keywords:
+      - teach me
+      - explain concepts
+      - 教我
+      - 讲讲原理
+      - 是什么意思
+  expert_mode:
+    category: learning
+    description: assumes expertise and skips basics
+    keywords:
+      - I know this
+      - skip basics
+      - 不用解释基础
+      - 我懂
+      - 不用科普
+
+# ── Legacy marker mapping (backward compatibility) ──
+# Maps old marker keys to new taxonomy keys
+legacy_marker_map:
+  simplify: concise_output
+  prefers_direct_action: direct_action
