@@ -1,0 +1,31 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Runtime state (session-specific, not portable)
+state/
+raw/
+inference/
+
+# Generated artifacts
+memory/dashboard.html
+memory/backup/
+memory/change_log.jsonl
+memory_export.json
+docs/assets/demo_frames/
+
+# Environment
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Agent execution state (session-specific)
+.agent/

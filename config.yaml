@@ -1,0 +1,110 @@
+engine:
+  promote_min_count: 5
+  promote_min_confidence: 0.75
+  promote_min_stability: 0.60
+  recent_min_count: 2
+  recent_min_confidence: 0.50
+  injection_budget_chars: 600
+
+hooks:
+  timeout_seconds: 10
+  stop_async: true
+
+markers:
+  summary_first:
+    - 摘要
+    - summary
+    - 先总结
+    - 概要
+    - overview first
+    - 先给摘要
+    - 先说结论
+    - 结论先行
+  simplify:
+    - 简洁
+    - 简单
+    - simplify
+    - concise
+    - brief
+    - 精简
+    - 别啰嗦
+    - 少废话
+    - 直接说
+  use_chinese:
+    - 用中文
+    - 中文回复
+    - 说中文
+    - chinese
+    - 请用中文
+  use_tables:
+    - 用表格
+    - 表格形式
+    - table format
+    - 用表格展示
+  show_evidence:
+    - 给证据
+    - 证据
+    - 依据
+    - evidence
+    - show proof
+    - 哪个文件
+    - 具体文件
+  modular_changes:
+    - 模块化
+    - modular
+    - incremental
+    - 逐步
+    - 分步
+    - 小步
+    - 一步一步
+    - 最小改动
+  avoid_interruptions:
+    - 不要问
+    - 别问
+    - don't ask
+    - no questions
+    - 直接做
+    - just do it
+    - 别确认
+  check_before_change:
+    - 先检查
+    - 先看看
+    - 先读
+    - read first
+    - check first
+    - 先确认一下
+  prefer_diagnosis:
+    - 诊断
+    - diagnose
+    - 排查
+    - 定位问题
+    - 根因
+    - root cause
+  wants_options:
+    - 给我选项
+    - 有哪些方案
+    - options
+    - 几种方案
+    - 哪些选择
+    - 你建议
+  prefers_direct_action:
+    - 直接改
+    - 直接做
+    - 不用问
+    - just fix
+    - just do
+    - 帮我改
+  no_over_engineering:
+    - 不要过度
+    - 别过度
+    - 不要大重构
+    - 最小修复
+    - minimal
+    - 不要加额外的
+  stay_focused:
+    - 不要跑题
+    - 别跑题
+    - 专注
+    - focus
+    - 只做这个
+    - 不要扩展

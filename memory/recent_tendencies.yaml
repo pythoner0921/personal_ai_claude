@@ -1,0 +1,18 @@
+schema_version: '1.0'
+items:
+- schema_version: '1.0'
+  id: pref_execution_uses_compact_command_style
+  description: uses compact command style
+  category: recent_tendency
+  evidence_summary: 10 supporting events from 1 source types
+  confidence_score: 0.624
+  first_seen: '2026-03-06T23:30:50.596876+09:00'
+  last_seen: '2026-03-06T23:55:35.229017+09:00'
+  status: active
+  source_frequency: 0.312
+  cross_context_stability: 0.333
+  version: 2
+  scope: global
+  last_used: ''
+  use_count: 0
+  decay_score: 0.769

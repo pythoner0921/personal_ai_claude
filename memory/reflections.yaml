@@ -1,0 +1,22 @@
+schema_version: '1.0'
+generated_at: '2026-03-15T14:31:51.344448+09:00'
+last_event_count: 123
+summaries:
+- id: ref_7655c39a0f14
+  theme: communication_style
+  summary: 'Communication: lead with summaries, use tables for comparisons, keep output
+    concise, cite specific files as evidence. (avg confidence 83%)'
+  source_count: 4
+  source_ids:
+  - pref_communication_prefers_summary_before_details
+  - pref_communication_prefers_table_format_for_comparison
+  - pref_communication_dislikes_verbose_prefers_concise_output
+  - pref_communication_wants_evidence_with_specific_files
+- id: ref_5aacab8ed337
+  theme: code_approach
+  summary: 'Code approach: prefer modular incremental changes, use compact command
+    style. (avg confidence 72%)'
+  source_count: 2
+  source_ids:
+  - pref_execution_prefers_modular_changes_over_big_rewrites
+  - pref_execution_uses_compact_command_style

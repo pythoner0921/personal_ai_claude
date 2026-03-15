@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 820" width="960" height="820" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow-emerald" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#10b981"/>
+    </marker>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="820" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Title -->
+  <text x="480" y="36" text-anchor="middle" font-size="16" font-weight="700" fill="#0f172a" letter-spacing="0.5">Personal AI Memory Engine</text>
+  <text x="480" y="54" text-anchor="middle" font-size="11" fill="#64748b">System Architecture</text>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- HOOKS SECTION (top) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <rect x="268" y="70" width="424" height="56" rx="8" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="290" y="86" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="1">HOOKS</text>
+
+  <rect x="286" y="94" width="120" height="26" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" filter="url(#shadow)"/>
+  <text x="346" y="111" text-anchor="middle" font-size="10" fill="#92400e" font-weight="600">SessionStart</text>
+
+  <rect x="420" y="94" width="120" height="26" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" filter="url(#shadow)"/>
+  <text x="480" y="111" text-anchor="middle" font-size="10" fill="#92400e" font-weight="600">UserPromptSubmit</text>
+
+  <rect x="554" y="94" width="120" height="26" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1" filter="url(#shadow)"/>
+  <text x="614" y="111" text-anchor="middle" font-size="10" fill="#92400e" font-weight="600">Stop</text>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- CORE PIPELINE (center vertical) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <rect x="310" y="140" width="340" height="460" rx="10" fill="none" stroke="#bfdbfe" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="332" y="158" font-size="9" fill="#3b82f6" font-weight="600" letter-spacing="1">CORE PIPELINE</text>
+
+  <!-- 1. User Interaction -->
+  <rect x="380" y="168" width="200" height="36" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="190" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="600">User Interaction</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="480" y1="204" x2="480" y2="220" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 2. Capture Layer -->
+  <rect x="380" y="224" width="200" height="36" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="246" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="600">Capture Layer</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="480" y1="260" x2="480" y2="276" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 3. Signal Extraction -->
+  <rect x="380" y="280" width="200" height="36" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="302" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="600">Signal Extraction</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="480" y1="316" x2="480" y2="332" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 4. Preference Engine -->
+  <rect x="380" y="336" width="200" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="358" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="700">Preference Engine</text>
+
+  <!-- Arrow 4→5 (store) -->
+  <line x1="480" y1="372" x2="480" y2="388" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 5. Memory Store (placeholder in pipeline) -->
+  <rect x="380" y="392" width="200" height="36" rx="7" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="414" text-anchor="middle" font-size="11" fill="#065f46" font-weight="600">Memory Store</text>
+
+  <!-- Arrow 5→6 -->
+  <line x1="480" y1="428" x2="480" y2="444" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 6. Ranking Engine -->
+  <rect x="380" y="448" width="200" height="36" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="470" text-anchor="middle" font-size="11" fill="#1e3a8a" font-weight="700">Ranking Engine</text>
+
+  <!-- Arrow 6→7 -->
+  <line x1="480" y1="484" x2="480" y2="500" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 7. Context Injection -->
+  <rect x="380" y="504" width="200" height="36" rx="7" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="526" text-anchor="middle" font-size="11" fill="#1e40af" font-weight="600">Context Injection</text>
+
+  <!-- Arrow 7→8 -->
+  <line x1="480" y1="540" x2="480" y2="556" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 8. LLM Response -->
+  <rect x="380" y="560" width="200" height="36" rx="7" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="582" text-anchor="middle" font-size="11" fill="#166534" font-weight="600">LLM Response</text>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- INTELLIGENCE MODULES (left side) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <rect x="28" y="260" width="230" height="216" rx="10" fill="none" stroke="#c4b5fd" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="50" y="278" font-size="9" fill="#7c3aed" font-weight="600" letter-spacing="1">INTELLIGENCE</text>
+
+  <rect x="46" y="290" width="194" height="32" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="143" y="310" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="600">Task Classifier</text>
+
+  <rect x="46" y="332" width="194" height="32" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="143" y="352" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="600">Reflection Engine</text>
+
+  <rect x="46" y="374" width="194" height="32" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="143" y="394" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="600">Memory Health Monitor</text>
+
+  <rect x="46" y="416" width="194" height="32" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="143" y="436" text-anchor="middle" font-size="10" fill="#5b21b6" font-weight="600">Consolidation Engine</text>
+
+  <!-- Arrows: Intelligence → Pipeline -->
+  <line x1="240" y1="306" x2="376" y2="466" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-blue)"/>
+  <line x1="240" y1="348" x2="376" y2="410" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-blue)"/>
+  <line x1="240" y1="432" x2="376" y2="360" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-blue)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- INTERFACES (right side) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <rect x="702" y="260" width="230" height="216" rx="10" fill="none" stroke="#99f6e4" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="724" y="278" font-size="9" fill="#0d9488" font-weight="600" letter-spacing="1">INTERFACES</text>
+
+  <rect x="720" y="290" width="194" height="32" rx="6" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="817" y="310" text-anchor="middle" font-size="10" fill="#115e59" font-weight="600">API Layer</text>
+
+  <rect x="720" y="332" width="194" height="32" rx="6" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="817" y="352" text-anchor="middle" font-size="10" fill="#115e59" font-weight="600">CLI Interface</text>
+
+  <rect x="720" y="374" width="194" height="32" rx="6" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="817" y="394" text-anchor="middle" font-size="10" fill="#115e59" font-weight="600">HTML Dashboard</text>
+
+  <rect x="720" y="416" width="194" height="32" rx="6" fill="#f0fdfa" stroke="#14b8a6" stroke-width="1" filter="url(#shadow)"/>
+  <text x="817" y="436" text-anchor="middle" font-size="10" fill="#115e59" font-weight="600">Export / Import</text>
+
+  <!-- Arrows: Pipeline → Interfaces -->
+  <line x1="584" y1="410" x2="716" y2="306" stroke="#14b8a6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-emerald)"/>
+  <line x1="584" y1="410" x2="716" y2="390" stroke="#14b8a6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-emerald)"/>
+  <line x1="584" y1="410" x2="716" y2="432" stroke="#14b8a6" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow-emerald)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STORAGE (bottom center) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <rect x="218" y="618" width="524" height="130" rx="10" fill="none" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="240" y="636" font-size="9" fill="#dc2626" font-weight="600" letter-spacing="1">STORAGE</text>
+
+  <rect x="236" y="648" width="150" height="36" rx="6" fill="#fff1f2" stroke="#f43f5e" stroke-width="1" filter="url(#shadow)"/>
+  <circle cx="252" cy="666" r="5" fill="#fda4af"/>
+  <text x="260" y="670" font-size="9" fill="#9f1239" font-weight="600">stable_preferences.yaml</text>
+
+  <rect x="236" y="694" width="150" height="36" rx="6" fill="#fff1f2" stroke="#f43f5e" stroke-width="1" filter="url(#shadow)"/>
+  <circle cx="252" cy="712" r="5" fill="#fda4af"/>
+  <text x="260" y="716" font-size="9" fill="#9f1239" font-weight="600">recent_tendencies.yaml</text>
+
+  <rect x="405" y="648" width="150" height="36" rx="6" fill="#fff1f2" stroke="#f43f5e" stroke-width="1" filter="url(#shadow)"/>
+  <circle cx="421" cy="666" r="5" fill="#fda4af"/>
+  <text x="429" y="670" font-size="9" fill="#9f1239" font-weight="600">archive.yaml</text>
+
+  <rect x="405" y="694" width="150" height="36" rx="6" fill="#fff1f2" stroke="#f43f5e" stroke-width="1" filter="url(#shadow)"/>
+  <circle cx="421" cy="712" r="5" fill="#fda4af"/>
+  <text x="429" y="716" font-size="9" fill="#9f1239" font-weight="600">reflections.yaml</text>
+
+  <rect x="574" y="648" width="150" height="36" rx="6" fill="#fef9ee" stroke="#d97706" stroke-width="1" filter="url(#shadow)"/>
+  <circle cx="590" cy="666" r="5" fill="#fcd34d"/>
+  <text x="598" y="670" font-size="9" fill="#92400e" font-weight="600">evidence.jsonl</text>
+
+  <rect x="574" y="694" width="150" height="36" rx="6" fill="#fef9ee" stroke="#d97706" stroke-width="1" filter="url(#shadow)"/>
+  <circle cx="590" cy="712" r="5" fill="#fcd34d"/>
+  <text x="598" y="716" font-size="9" fill="#92400e" font-weight="600">change_log.jsonl</text>
+
+  <!-- Arrow: Memory Store → Storage -->
+  <line x1="480" y1="428" x2="480" y2="440" stroke="none"/>
+  <path d="M480,596 L480,614" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- NOTES (bottom) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <rect x="48" y="765" width="400" height="40" rx="7" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="64" y="781" font-size="9" fill="#475569" font-weight="600">Lifecycle:</text>
+  <text x="64" y="795" font-size="9.5" fill="#334155" font-family="Consolas, monospace">candidate → recent → stable → archived</text>
+
+  <rect x="470" y="765" width="450" height="40" rx="7" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="486" y="781" font-size="9" fill="#475569" font-weight="600">Ranking:</text>
+  <text x="486" y="795" font-size="9.5" fill="#334155" font-family="Consolas, monospace">priority×3 + confidence×decay + relevance + scope + affinity</text>
+
+</svg>
